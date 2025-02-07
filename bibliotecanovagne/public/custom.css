@@ -1,0 +1,42 @@
+/* custom.css */
+
+/* Estilo geral do body */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Navbar aprimorada com sombra */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Container com fundo branco, bordas arredondadas e sombra */
+.container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Títulos com espaçamento e leveza */
+h1 {
+    font-weight: 300;
+    margin-bottom: 20px;
+}
+
+/* Estilização dos cabeçalhos de tabelas */
+.table thead {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Efeito hover nas linhas da tabela */
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Transição suave para botões */
+.btn {
+    transition: background-color 0.3s ease;
+}
