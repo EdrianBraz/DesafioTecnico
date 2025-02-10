@@ -1,0 +1,162 @@
+@extends('layouts.app')
+
+@section('content')
+
+<div class="container">
+    <h1>Lista de Empréstimos</h1>
+
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    @if(session('warning'))
+    <div class="alert alert-warning">
+        {{ session('warning') }}
+    </div>
+    @endif
+
+    <form method="GET" action="{{ route('emprestimos.index') }}">
+        <div class="form-group">
+            <label for="usuario">Filtrar por Usuário</label>
+            <select name="usuario" id="usuario" class="form-control" onchange="this.form.submit()">
+                <option value="">Todos</option>
+                @foreach($usuarios as $usuario)
+                <option value="{{ $usuario->id }}" {{ request('usuario') == $usuario->id ? 'selected' : '' }}>
+                    {{ $usuario->nome }}
+                </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Filtrar por Status</label>
+            <select name="status" id="status" class="form-control" onchange="this.form.submit()">
+            <option value="">Todos</option>
+                <option value="aberto" {{ request('status') == 'aberto' ? 'selected' : '' }}>Em aberto</option>
+                <option value="devolvido" {{ request('status') == 'devolvido' ? 'selected' : '' }}>Devolvidos</option>
+            </select>
+        </div>
+    </form>
+
+    <a href="{{ route('emprestimos.create') }}" class="btn btn-primary mb-3">Registrar Novo Empréstimo</a>
+    <form id="emprestimos-form" method="POST" action="{{ route('emprestimos.massDestroy') }}">
+    @csrf
+    @method('DELETE')
+
+    <!-- Botão para ativar seleção -->
+    <div class="mb-3">
+        <button type="button" class="btn btn-secondary" id="selecionar-btn">Selecionar</button>
+        <button type="button" class="btn btn-warning d-none" id="editar-btn" disabled>Editar</button>
+        <button type="submit" class="btn btn-danger d-none" id="excluir-btn" disabled>Excluir Selecionados</button>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="checkbox-column d-none">
+                    <input type="checkbox" id="select-all" />
+                </th>
+                <th>ID</th>
+                <th>Usuário</th>
+                <th>Livro</th>
+                <th>Data de Empréstimo</th>
+                <th>Data de Devolução</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($emprestimos as $emprestimo)
+            <tr class="{{ $emprestimo->data_devolucao ? 'devolvido' : 'em-aberto' }}">
+                <td class="checkbox-column d-none">
+                    <input type="checkbox" name="emprestimos[]" value="{{ $emprestimo->id }}" class="select-item" />
+                </td>
+                <td>{{ $emprestimo->id }}</td>
+                <td>{{ $emprestimo->usuario->nome }}</td>
+                <td>{{ $emprestimo->livro->titulo }}</td>
+                <td>{{ $emprestimo->data_emprestimo }}</td>
+                <td>
+                    {{ $emprestimo->data_devolucao ? $emprestimo->data_devolucao : 'Em aberto' }}
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</form>
+
+
+</div>
+<script>
+    // Função que filtra os empréstimos visíveis
+    function filtrarStatus() {
+        var status = "{{ request('status') }}"; // Pega o status selecionado
+        var emprestimos = document.querySelectorAll('tr');
+        
+        // Oculta empréstimos devolvidos inicialmente
+        emprestimos.forEach(function(row) {
+            if (row.classList.contains('devolvido')) {
+                row.style.display = 'none'; // Oculta empréstimos devolvidos
+            }
+        });
+
+        // Mostra/oculta as linhas baseadas no status
+        emprestimos.forEach(function(row) {
+            if (status === 'aberto' && row.classList.contains('em-aberto')) {
+                row.style.display = ''; // Exibe empréstimos em aberto
+            } else if (status === 'devolvido' && row.classList.contains('devolvido')) {
+                row.style.display = ''; // Exibe empréstimos devolvidos
+            } else if (status === '') {
+                row.style.display = ''; // Exibe todos
+            } else {
+                row.style.display = 'none'; // Oculta a linha que não corresponde ao filtro
+            }
+        });
+    }
+
+    // Chama a função ao carregar a página
+    window.onload = filtrarStatus;
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let selecionarBtn = document.getElementById('selecionar-btn');
+        let editarBtn = document.getElementById('editar-btn');
+        let excluirBtn = document.getElementById('excluir-btn');
+        let checkboxes = document.querySelectorAll('.select-item');
+        let checkboxColumn = document.querySelectorAll('.checkbox-column');
+
+        function atualizarBotoes() {
+            let selecionados = document.querySelectorAll('.select-item:checked');
+            let algumSelecionado = selecionados.length > 0;
+
+            editarBtn.disabled = !algumSelecionado;
+            excluirBtn.disabled = !algumSelecionado;
+        }
+
+        selecionarBtn.addEventListener('click', function() {
+            // Alterna a visibilidade das checkboxes
+            checkboxColumn.forEach(col => col.classList.toggle('d-none'));
+            
+            // Exibe os botões de ação
+            editarBtn.classList.toggle('d-none');
+            excluirBtn.classList.toggle('d-none');
+
+            // Alterna o texto do botão entre "Selecionar" e "Cancelar"
+            if (selecionarBtn.innerText === "Selecionar") {
+                selecionarBtn.innerText = "Cancelar";
+            } else {
+                selecionarBtn.innerText = "Selecionar";
+
+                // Desmarca todas as checkboxes e desativa os botões
+                checkboxes.forEach(cb => cb.checked = false);
+                atualizarBotoes();
+            }
+        });
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', atualizarBotoes);
+        });
+    });
+</script>
+
+
+@endsection
