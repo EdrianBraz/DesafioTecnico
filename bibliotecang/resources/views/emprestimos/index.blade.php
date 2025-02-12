@@ -33,7 +33,7 @@
         <div class="form-group">
             <label for="status">Filtrar por Status</label>
             <select name="status" id="status" class="form-control" onchange="this.form.submit()">
-            <option value="">Todos</option>
+                <option value="">Todos</option>
                 <option value="aberto" {{ request('status') == 'aberto' ? 'selected' : '' }}>Em aberto</option>
                 <option value="devolvido" {{ request('status') == 'devolvido' ? 'selected' : '' }}>Devolvidos</option>
             </select>
@@ -42,56 +42,65 @@
 
     <a href="{{ route('emprestimos.create') }}" class="btn btn-primary mb-3">Registrar Novo Empréstimo</a>
     <form id="emprestimos-form" method="POST" action="{{ route('emprestimos.massDestroy') }}">
-    @csrf
-    @method('DELETE')
+        @csrf
+        @method('DELETE')
 
-    <!-- Botão para ativar seleção -->
-    <div class="mb-3">
-        <button type="button" class="btn btn-secondary" id="selecionar-btn">Selecionar</button>
-        <button type="button" class="btn btn-warning d-none" id="editar-btn" disabled>Editar</button>
-        <button type="submit" class="btn btn-danger d-none" id="excluir-btn" disabled>Excluir Selecionados</button>
-    </div>
+        <!-- Botões de Ação -->
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" id="selecionar-btn">Selecionar</button>
+            <button type="submit" class="btn btn-danger d-none" id="excluir-btn" disabled>Excluir Selecionados</button>
+        </div>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th class="checkbox-column d-none">
-                    <input type="checkbox" id="select-all" />
-                </th>
-                <th>ID</th>
-                <th>Usuário</th>
-                <th>Livro</th>
-                <th>Data de Empréstimo</th>
-                <th>Data de Devolução</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($emprestimos as $emprestimo)
-            <tr class="{{ $emprestimo->data_devolucao ? 'devolvido' : 'em-aberto' }}">
-                <td class="checkbox-column d-none">
-                    <input type="checkbox" name="emprestimos[]" value="{{ $emprestimo->id }}" class="select-item" />
-                </td>
-                <td>{{ $emprestimo->id }}</td>
-                <td>{{ $emprestimo->usuario->nome }}</td>
-                <td>{{ $emprestimo->livro->titulo }}</td>
-                <td>{{ $emprestimo->data_emprestimo }}</td>
-                <td>
-                    {{ $emprestimo->data_devolucao ? $emprestimo->data_devolucao : 'Em aberto' }}
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</form>
+        <table class="table table-bordered">
+            <!-- Cabeçalho da tabela -->
+            <thead>
+                <tr>
+                    <th class="checkbox-column d-none">
+                        <input type="checkbox" id="select-all" />
+                    </th>
+                    <th>ID</th>
+                    <th>Usuário</th>
+                    <th>Livro</th>
+                    <th>Data de Empréstimo</th>
+                    <th>Data de Devolução</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($emprestimos as $emprestimo)
+                <tr class="{{ $emprestimo->data_devolucao ? 'devolvido' : 'em-aberto' }}">
+                    <td class="checkbox-column d-none">
+                        <input type="checkbox" name="emprestimos[]" value="{{ $emprestimo->id }}" class="select-item" />
+                    </td>
+                    <td>{{ $emprestimo->id }}</td>
+                    <td>{{ $emprestimo->usuario->nome }}</td>
+                    <td>{{ $emprestimo->livro->titulo }}</td>
+                    <td>{{ $emprestimo->data_emprestimo }}</td>
+                    <td>
+                        {{ $emprestimo->data_devolucao ? $emprestimo->data_devolucao : 'Em aberto' }}
+                    </td>
+                    @if(!$emprestimo->data_devolucao) <!-- Adiciona botão "Marcar como Devolvido" somente para empréstimos não devolvidos -->
+                    <td>
+                        <form action="{{ route('emprestimos.marcarDevolvido', $emprestimo->id) }}" method="POST">
 
+                            <button type="submit" class="btn btn-warning btn-sm">Devolvido</button>
+                        </form>
+
+                    </td>
+                    @endif
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </form>
 
 </div>
+
 <script>
     // Função que filtra os empréstimos visíveis
     function filtrarStatus() {
         var status = "{{ request('status') }}"; // Pega o status selecionado
         var emprestimos = document.querySelectorAll('tr');
-        
+
         // Oculta empréstimos devolvidos inicialmente
         emprestimos.forEach(function(row) {
             if (row.classList.contains('devolvido')) {
@@ -116,11 +125,12 @@
     // Chama a função ao carregar a página
     window.onload = filtrarStatus;
 </script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         let selecionarBtn = document.getElementById('selecionar-btn');
-        let editarBtn = document.getElementById('editar-btn');
         let excluirBtn = document.getElementById('excluir-btn');
+        let devolverBtn = document.getElementById('devolver-btn');
         let checkboxes = document.querySelectorAll('.select-item');
         let checkboxColumn = document.querySelectorAll('.checkbox-column');
 
@@ -128,17 +138,17 @@
             let selecionados = document.querySelectorAll('.select-item:checked');
             let algumSelecionado = selecionados.length > 0;
 
-            editarBtn.disabled = !algumSelecionado;
             excluirBtn.disabled = !algumSelecionado;
+            devolverBtn.disabled = !algumSelecionado;
         }
 
         selecionarBtn.addEventListener('click', function() {
             // Alterna a visibilidade das checkboxes
             checkboxColumn.forEach(col => col.classList.toggle('d-none'));
-            
+
             // Exibe os botões de ação
-            editarBtn.classList.toggle('d-none');
             excluirBtn.classList.toggle('d-none');
+            devolverBtn.classList.toggle('d-none');
 
             // Alterna o texto do botão entre "Selecionar" e "Cancelar"
             if (selecionarBtn.innerText === "Selecionar") {
@@ -157,6 +167,5 @@
         });
     });
 </script>
-
 
 @endsection

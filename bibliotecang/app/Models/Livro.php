@@ -18,6 +18,22 @@ class Livro extends Model
         'capa', 
     ];
 
+        // Método para calcular a quantidade disponível
+        public function quantidadeDisponivel()
+        {
+            // Contar a quantidade de livros emprestados
+            $quantidadeEmprestada = $this->emprestimos()->whereNull('data_devolucao')->count();
+            
+            // Retorna a quantidade disponível
+            return $this->quantidade_estoque - $quantidadeEmprestada;
+        }
+
+        // Relacionamento com os empréstimos
+        public function emprestimos()
+        {
+            return $this->hasMany(Emprestimo::class);
+        }
+
     public function categorias()
     {
         return $this->belongsToMany(Categoria::class, 'categoria_livro');

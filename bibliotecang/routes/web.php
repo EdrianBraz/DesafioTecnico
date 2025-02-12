@@ -17,7 +17,6 @@ Route::resource('livros', LivroController::class);
 Route::get('/livros', [LivroController::class, 'index'])->name('livros.index');
 Route::get('/livros/{id}', [LivroController::class, 'show'])->name('livros.show');
 
-
 // 👥 Rotas de Usuários
 Route::resource('usuarios', UsuarioController::class);
 Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
@@ -25,17 +24,14 @@ Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.ind
 // 📖 Rotas de Empréstimos
 Route::resource('emprestimos', EmprestimoController::class);
 Route::get('/emprestimos', [EmprestimoController::class, 'index'])->name('emprestimos.index');
-Route::get('emprestimos/{id}/devolver', [EmprestimoController::class, 'devolver'])
-    ->name('emprestimos.devolver');
-Route::delete('/emprestimos', [EmprestimoController::class, 'massDestroy'])
-    ->name('emprestimos.massDestroy');
+
+// Rota para marcar o empréstimo como devolvido
+Route::patch('/emprestimos/devolver/{id}', [EmprestimoController::class, 'marcarComoDevolvido'])
+    ->name('emprestimos.marcarDevolvido');
+
+// Excluir empréstimos em massa
+Route::delete('/emprestimos', [EmprestimoController::class, 'massDestroy'])->name('emprestimos.massDestroy');
 
 // 📊 Rotas de Relatórios
 Route::get('/relatorios', [RelatorioController::class, 'index'])->name('relatorio.index');
-Route::get('/', [HomeController::class, 'index'])->name('home');
-
-
-
-// 📝 Gerar PDF pelo Controller
 Route::get('/relatorio/pdf', [RelatorioController::class, 'gerarPdf'])->name('relatorio.pdf');
-

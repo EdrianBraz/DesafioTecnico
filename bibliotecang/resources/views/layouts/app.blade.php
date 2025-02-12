@@ -7,46 +7,68 @@
     <title>Gerenciamento da Biblioteca</title>
     <!-- Importando o Bootstrap via CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Importando Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Importando o CSS customizado -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
-
+    <style>
+        /* Estilizando a sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            background: #2c3e50;
+            color: white;
+            padding-top: 20px;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+        }
+        .sidebar a:hover {
+            background: #1a252f;
+        }
+        /* Ajustando o conteúdo principal */
+        .content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+        /* Estilizando o cabeçalho */
+        .header {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Biblioteca</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ route('home') }}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('livros.index') }}">Livros</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('usuarios.index') }}">Usuários</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('emprestimos.index') }}">Empréstimos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('relatorio.index') }}">Relatórios</a>
-                    </li>
-
-                </ul>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h4 class="text-center mb-4">BIBLIOTECÁRIO</h4>
+            <a href="{{ route('home') }}"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="{{ route('livros.index') }}"><i class="fas fa-book"></i> Livros</a>
+            <a href="{{ route('usuarios.index') }}"><i class="fas fa-users"></i> Usuários</a>
+            <a href="{{ route('emprestimos.index') }}"><i class="fas fa-handshake"></i> Empréstimos</a>
+            <a href="{{ route('relatorio.index') }}"><i class="fas fa-chart-bar"></i> Relatórios</a>
+        </div>
+        
+        <!-- Conteúdo Principal -->
+        <div class="content w-100">
+            <div class="header">Sistema Bibliotecário</div>
+            <div class="container mt-4">
+                @yield('content')
             </div>
         </div>
-    </nav>
-
-    <!-- Área para o conteúdo específico de cada página -->
-    <div class="container mt-4">
-        @yield('content')
     </div>
 
     <!-- Importando o JavaScript do Bootstrap -->

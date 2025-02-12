@@ -16,13 +16,12 @@ class Emprestimo extends Model
         'data_devolucao',
     ];
 
-    // Relacionamento com usuário
+    // Relacionamentos
     public function usuario()
     {
         return $this->belongsTo(Usuario::class);
     }
 
-    // Relacionamento com livro
     public function livro()
     {
         return $this->belongsTo(Livro::class);

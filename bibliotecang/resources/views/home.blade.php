@@ -1,92 +1,115 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="pt-br">
 
-@section('content')
-    <div class="text-center mt-5">
-        <h1 class="display-4 font-weight-bold text-primary">Bem-vindo ao Sistema de Gerenciamento da Biblioteca</h1>
-        <p class="lead text-muted">Encontre e gerencie seus livros com facilidade.</p>
-    </div>
-
-    <div class="container mt-5">
-        <h2 class="mb-4 text-center text-secondary">Livros Mais Emprestados</h2>
-        
-        <div id="livrosCarrossel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
-            <div class="carousel-inner">
-                @foreach($livrosMaisEmprestados as $index => $livro)
-                    <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                        <a href="{{ route('livros.show', $livro->id) }}">
-                            <img src="{{ $livro->capa }}" class="d-block mx-auto rounded shadow-lg" alt="{{ $livro->titulo }}" style="width: 200px; height: 300px; object-fit: cover;">
-                        </a>
-                    </div>
-                @endforeach
-            </div>
-            
-            <button class="carousel-control-prev" type="button" data-bs-target="#livrosCarrossel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#livrosCarrossel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-    </div>
-@endsection
-
-@section('styles')
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento da Biblioteca</title>
+    <!-- Importando o Bootstrap via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Importando Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Importando o CSS customizado -->
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     <style>
-        body {
-            background-color: #f8f9fa;
+        /* Estilizando a sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            background: #2c3e50;
+            color: white;
+            padding-top: 20px;
         }
-
-        .carousel-inner {
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+        }
+        .sidebar a:hover {
+            background: #1a252f;
+        }
+        /* Ajustando o conteúdo principal */
+        .content {
+            margin-left: 260px;
             padding: 20px;
-            background-color: #fff;
+        }
+        /* Estilizando o cabeçalho */
+        .header {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        /* Cards informativos */
+        .info-card {
+            background: #2980b9;
+            color: white;
+            padding: 20px;
             border-radius: 10px;
+            text-align: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-
-        .carousel-item img {
-            transition: transform 0.5s ease-in-out;
-        }
-
-        .carousel-item img:hover {
-            transform: scale(1.1);
-        }
-
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            background-color: #007bff;
-        }
-
-        .carousel-control-prev,
-        .carousel-control-next {
-            z-index: 10;
-        }
-
-        h2 {
-            font-size: 2.5rem;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1200px;
-        }
-
-        .display-4 {
-            font-size: 3.5rem;
-            font-weight: 700;
-        }
-
-        .lead {
-            font-size: 1.25rem;
-        }
-
-        .shadow-lg {
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .rounded {
-            border-radius: 10px;
+        .info-card i {
+            font-size: 40px;
+            margin-bottom: 10px;
         }
     </style>
-@endsection
+</head>
+
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h4 class="text-center mb-4">BIBLIOTECÁRIO</h4>
+            <a href="{{ route('home') }}"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="{{ route('livros.index') }}"><i class="fas fa-book"></i> Livros</a>
+            <a href="{{ route('usuarios.index') }}"><i class="fas fa-users"></i> Usuários</a>
+            <a href="{{ route('emprestimos.index') }}"><i class="fas fa-handshake"></i> Empréstimos</a>
+            <a href="{{ route('relatorio.index') }}"><i class="fas fa-chart-bar"></i> Relatórios</a>
+        </div>
+        
+        <!-- Conteúdo Principal -->
+        <div class="content w-100">
+            <div class="header">Sistema Bibliotecário</div>
+            <div class="container mt-4">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="info-card">
+                            <i class="fas fa-user-plus"></i>
+                            <h5>Usuários Cadastrados</h5>
+                            <p>{{ $totalUsuarios }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-card">
+                            <i class="fas fa-book"></i>
+                            <h5>Livros no Acervo</h5>
+                            <p>{{ $totalLivros }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-card">
+                            <i class="fas fa-handshake"></i>
+                            <h5>Empréstimos Ativos</h5>
+                            <p>{{ $totalEmprestimos }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                @yield('content')
+            </div>
+        </div>
+    </div>
+
+    <!-- Importando o JavaScript do Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
