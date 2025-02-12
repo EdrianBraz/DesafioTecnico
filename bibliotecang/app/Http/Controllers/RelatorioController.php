@@ -34,4 +34,6 @@ class RelatorioController extends Controller
         $pdf = Pdf::loadView('relatorio-pdf', compact('relatorio'));
         return $pdf->download('relatorio_emprestimos.pdf');
     }
+
+    
 }

@@ -4,7 +4,6 @@
 <div class="container">
     <h1>Cadastrar Livro</h1>
     
-    <!-- Exibe erros de validação, se houver -->
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
@@ -34,8 +33,21 @@
             <input type="number" class="form-control" id="ano_publicacao" name="ano_publicacao" required>
         </div>
         <div class="mb-3">
-            <label for="categoria" class="form-label">Categoria</label>
-            <input type="text" class="form-control" id="categoria" name="categoria" required>
+    <label class="form-label">Categorias</label>
+    <div style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
+        @foreach ($categorias as $categoria)
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="categorias_existentes[]" value="{{ $categoria->id }}" id="categoria_{{ $categoria->id }}">
+                <label class="form-check-label" for="categoria_{{ $categoria->id }}">
+                    {{ $categoria->nome }}
+                </label>
+            </div>
+        @endforeach
+    </div>
+</div>
+<div class="mb-3">
+            <label for="nova_categoria" class="form-label">Nova Categoria (Opcional)</label>
+            <input type="text" class="form-control" id="nova_categoria" name="nova_categoria" placeholder="Digite uma nova categoria">
         </div>
         <div class="mb-3">
             <label for="quantidade_estoque" class="form-label">Quantidade em Estoque</label>
