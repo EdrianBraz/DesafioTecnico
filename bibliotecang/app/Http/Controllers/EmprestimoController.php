@@ -14,18 +14,15 @@ class EmprestimoController extends Controller
 
     public function index(Request $request)
     {
-        $query = Emprestimo::with(['usuario', 'livro']); // Carregar relacionamento
+        $query = Emprestimo::with(['usuario', 'livro']);
 
         // Filtrando por usuário, se houver
         if ($request->filled('usuario')) {
             $query->where('usuario_id', $request->usuario);
         }
-
         // Obter os empréstimos com base na filtragem
         $emprestimos = $query->get();
-
-        // Obter todos os usuários para o filtro
-        $usuarios = Usuario::all(); // Certifique-se de que você tem o modelo Usuario
+        $usuarios = Usuario::all(); 
 
         return view('emprestimos.index', compact('emprestimos', 'usuarios'));
     }
@@ -49,7 +46,7 @@ class EmprestimoController extends Controller
             'data_emprestimo'  => 'required|date',
         ]);
 
-        Emprestimo::create($validated); // Criação de um empréstimo
+        Emprestimo::create($validated);
 
         return redirect()->route('emprestimos.index')
             ->with('success', 'Empréstimo registrado com sucesso!');
@@ -60,7 +57,7 @@ class EmprestimoController extends Controller
     {
         $emprestimo = Emprestimo::findOrFail($id);
 
-        // Se o livro já foi devolvido, podemos impedir a ação
+        // Se o livro já foi devolvido impede a ação
         if ($emprestimo->data_devolucao) {
             return redirect()->route('emprestimos.index')
                 ->with('warning', 'Este empréstimo já foi devolvido.');
@@ -95,10 +92,10 @@ class EmprestimoController extends Controller
 
     public function massDestroy(Request $request)
     {
-        $ids = $request->input('emprestimos'); // IDs dos empréstimos selecionados
+        $ids = $request->input('emprestimos');
 
         if ($ids) {
-            Emprestimo::destroy($ids); // Exclui os empréstimos selecionados
+            Emprestimo::destroy($ids); 
             return redirect()->route('emprestimos.index')->with('success', 'Empréstimos excluídos com sucesso!');
         }
 
@@ -107,10 +104,7 @@ class EmprestimoController extends Controller
 
     public function destroy(Emprestimo $emprestimo)
     {
-        // Exclui o empréstimo
         $emprestimo->delete();
-
-        // Redireciona com uma mensagem de sucesso
         return redirect()->route('emprestimos.index')->with('success', 'Empréstimo excluído com sucesso!');
     }
     public function marcarComoDevolvido(Request $request, $id)

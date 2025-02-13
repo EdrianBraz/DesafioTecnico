@@ -53,11 +53,6 @@ class Livro extends Model
         });
     }
 
-    /**
-     * Salva a imagem de fallback no S3.
-     *
-     * @return string|null
-     */
     private function salvarImagemFallback()
     {
         try {

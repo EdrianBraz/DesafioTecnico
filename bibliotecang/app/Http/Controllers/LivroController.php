@@ -29,8 +29,7 @@ class LivroController extends Controller
                 return new Livro($livro); // Converte stdClass para instância do modelo Livro
             });
         } else {
-            $query = Livro::with('categorias'); // Carregar categorias relacionadas
-
+            $query = Livro::with('categorias');
             if ($request->filled('titulo')) {
                 $query->where('titulo', 'like', '%' . $request->titulo . '%');
             }
@@ -52,12 +51,12 @@ class LivroController extends Controller
             $livros = $query->get();
         }
 
-        // Buscar categorias corretamente
+        // Buscar categorias 
         $categoriasCache = Redis::get('categorias_disponiveis');
         if ($categoriasCache) {
             $categorias = collect(json_decode($categoriasCache));
         } else {
-            $categorias = \App\Models\Categoria::all(); // Buscar todas as categorias do banco
+            $categorias = \App\Models\Categoria::all();
             Redis::setex('categorias_disponiveis', 600, $categorias->toJson());
         }
 
@@ -104,7 +103,6 @@ class LivroController extends Controller
         return null;
     }
     
-    // Função para buscar a capa usando a API do Google Books
     private function buscarCapaGoogleBooks($query)
     {
         $url = "https://www.googleapis.com/books/v1/volumes?q=" . urlencode($query);
@@ -121,7 +119,6 @@ class LivroController extends Controller
         return null;
     }
     
-    // Função para buscar a capa usando a Open Library API
     private function buscarCapaOpenLibrary($isbn)
     {
         if ($isbn) {
@@ -137,7 +134,6 @@ class LivroController extends Controller
         return null;
     }
     
-    // Função para buscar a capa usando a Cover API
     private function buscarCapaCoverApi($isbn)
     {
         if ($isbn) {
