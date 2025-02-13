@@ -8,8 +8,10 @@ use App\Models\Livro;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
+
 class EmprestimoController extends Controller
 {
+
     public function index(Request $request)
     {
         $query = Emprestimo::with(['usuario', 'livro']); // Carregar relacionamento
@@ -28,12 +30,13 @@ class EmprestimoController extends Controller
         return view('emprestimos.index', compact('emprestimos', 'usuarios'));
     }
 
+
     // Exibe o formulário de cadastro de empréstimo
     public function create()
     {
         // Busca todos os usuários e livros para preencher os selects
-        $usuarios = Usuario::all();
-        $livros = Livro::all();
+        $usuarios = Usuario::orderBy('nome', 'asc')->get();
+        $livros = Livro::orderBy('titulo', 'asc')->get();
         return view('emprestimos.create', compact('usuarios', 'livros'));
     }
 
@@ -49,7 +52,7 @@ class EmprestimoController extends Controller
         Emprestimo::create($validated); // Criação de um empréstimo
 
         return redirect()->route('emprestimos.index')
-                         ->with('success', 'Empréstimo registrado com sucesso!');
+            ->with('success', 'Empréstimo registrado com sucesso!');
     }
 
     // Registra a devolução do livro
@@ -60,7 +63,7 @@ class EmprestimoController extends Controller
         // Se o livro já foi devolvido, podemos impedir a ação
         if ($emprestimo->data_devolucao) {
             return redirect()->route('emprestimos.index')
-                             ->with('warning', 'Este empréstimo já foi devolvido.');
+                ->with('warning', 'Este empréstimo já foi devolvido.');
         }
 
         $emprestimo->update([
@@ -68,7 +71,7 @@ class EmprestimoController extends Controller
         ]);
 
         return redirect()->route('emprestimos.index')
-                         ->with('success', 'Livro devolvido com sucesso!');
+            ->with('success', 'Livro devolvido com sucesso!');
     }
 
     // Atualiza as informações do empréstimo
@@ -87,7 +90,7 @@ class EmprestimoController extends Controller
         $emprestimo->update($validated);
 
         return redirect()->route('emprestimos.index')
-                         ->with('success', 'Empréstimo atualizado com sucesso!');
+            ->with('success', 'Empréstimo atualizado com sucesso!');
     }
 
     public function massDestroy(Request $request)
@@ -113,19 +116,17 @@ class EmprestimoController extends Controller
     public function marcarComoDevolvido(Request $request, $id)
     {
         $emprestimo = Emprestimo::findOrFail($id);
-    
+
         if ($emprestimo->data_devolucao) {
             return redirect()->route('emprestimos.index')
-                             ->with('warning', 'Este empréstimo já foi devolvido.');
+                ->with('warning', 'Este empréstimo já foi devolvido.');
         }
-    
+
         $emprestimo->update([
             'data_devolucao' => Carbon::now()->toDateString(),
         ]);
-    
-        return redirect()->route('emprestimos.index')
-                         ->with('success', 'Livro devolvido com sucesso!');
-    }
-    
 
+        return redirect()->route('emprestimos.index')
+            ->with('success', 'Livro devolvido com sucesso!');
+    }
 }

@@ -8,26 +8,21 @@ use App\Http\Controllers\EmprestimoController;
 use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\HomeController;
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+// Página inicial
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // 📚 Rotas de Livros
 Route::resource('livros', LivroController::class);
-Route::get('/livros', [LivroController::class, 'index'])->name('livros.index');
-Route::get('/livros/{id}', [LivroController::class, 'show'])->name('livros.show');
+Route::get('/livros/importar-sinopse/{isbn}', [LivroController::class, 'importarSinopse'])->name('livros.importarSinopse');
 
 // 👥 Rotas de Usuários
 Route::resource('usuarios', UsuarioController::class);
-Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
 
-// 📖 Rotas de Empréstimos
+// 👥 Rotas de Empréstimo
 Route::resource('emprestimos', EmprestimoController::class);
-Route::get('/emprestimos', [EmprestimoController::class, 'index'])->name('emprestimos.index');
 
 // Rota para marcar o empréstimo como devolvido
-Route::patch('/emprestimos/devolver/{id}', [EmprestimoController::class, 'marcarComoDevolvido'])
-    ->name('emprestimos.marcarDevolvido');
+Route::patch('/emprestimos/{id}/devolver', [EmprestimoController::class, 'devolver'])->name('emprestimos.devolver');
 
 // Excluir empréstimos em massa
 Route::delete('/emprestimos', [EmprestimoController::class, 'massDestroy'])->name('emprestimos.massDestroy');

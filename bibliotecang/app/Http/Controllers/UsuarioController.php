@@ -7,10 +7,10 @@ use Illuminate\Http\Request;
 
 class UsuarioController extends Controller
 {
-    // Lista todos os usuários
+        // Lista todos os usuários
     public function index()
     {
-        $usuarios = Usuario::all();
+        $usuarios = Usuario::orderBy('nome', 'asc')->get();
         return view('usuarios.index', compact('usuarios'));
     }
 
@@ -31,7 +31,10 @@ class UsuarioController extends Controller
         ]);
 
         Usuario::create($validated);
-
+        
         return redirect()->route('usuarios.index')->with('success', 'Usuário cadastrado com sucesso!');
     }
+
+
+
 }

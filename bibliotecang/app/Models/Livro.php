@@ -16,6 +16,7 @@ class Livro extends Model
         'ano_publicacao',
         'quantidade_estoque',
         'capa', 
+        'sinopse',
     ];
 
         // Método para calcular a quantidade disponível

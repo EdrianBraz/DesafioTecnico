@@ -24,12 +24,7 @@
                     <option value="{{ $usuario->id }}">{{ $usuario->nome }}</option>
                 @endforeach
             </select>
-        </div>
-        <div class="mb-3">
-    <label for="livro_busca" class="form-label">Buscar Livro</label>
-    <input type="text" class="form-control" id="livro_busca" placeholder="Digite o nome do livro">
 </div>
-
 <div class="mb-3">
     <label for="livro_id" class="form-label">Livro</label>
     <select class="form-control" id="livro_id" name="livro_id" required>
