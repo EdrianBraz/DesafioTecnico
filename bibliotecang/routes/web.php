@@ -18,8 +18,6 @@ Route::get('/livros/importar-sinopse/{isbn}', [LivroController::class, 'importar
 // 👥 Rotas de Usuários
 Route::resource('usuarios', UsuarioController::class);
 
-// 👥 Rotas de Empréstimo
-Route::resource('emprestimos', EmprestimoController::class);
 
 // Rota para marcar o empréstimo como devolvido
 Route::patch('/emprestimos/{id}/devolver', [EmprestimoController::class, 'devolver'])->name('emprestimos.devolver');
@@ -30,3 +28,6 @@ Route::delete('/emprestimos', [EmprestimoController::class, 'massDestroy'])->nam
 // 📊 Rotas de Relatórios
 Route::get('/relatorios', [RelatorioController::class, 'index'])->name('relatorio.index');
 Route::get('/relatorio/pdf', [RelatorioController::class, 'gerarPdf'])->name('relatorio.pdf');
+
+// 👥 Rotas de Empréstimo
+Route::resource('emprestimos', EmprestimoController::class);

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 
 class LivroController extends Controller
 {
@@ -169,7 +170,6 @@ class LivroController extends Controller
             Storage::disk('s3')->put($nomeArquivo, $response->body());
 
             Log::info("Upload concluído: " . Storage::disk('s3')->url($nomeArquivo));
-
 
             // Gera a URL pública da imagem armazenada no S3
             $caminhoS3 = Storage::disk('s3')->url($nomeArquivo);

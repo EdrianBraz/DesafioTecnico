@@ -53,23 +53,26 @@ class EmprestimoController extends Controller
     }
 
     // Registra a devolução do livro
-    public function devolver($id)
-    {
-        $emprestimo = Emprestimo::findOrFail($id);
+// ... (outros métodos do seu controller)
 
-        // Se o livro já foi devolvido impede a ação
-        if ($emprestimo->data_devolucao) {
-            return redirect()->route('emprestimos.index')
-                ->with('warning', 'Este empréstimo já foi devolvido.');
-        }
+public function devolver($id)
+{
+    $emprestimo = Emprestimo::findOrFail($id);
 
-        $emprestimo->update([
-            'data_devolucao' => Carbon::now()->toDateString(),
-        ]);
-
+    if ($emprestimo->data_devolucao) {
         return redirect()->route('emprestimos.index')
-            ->with('success', 'Livro devolvido com sucesso!');
+            ->with('warning', 'Este empréstimo já foi devolvido.');
     }
+
+    $emprestimo->update([
+        'data_devolucao' => Carbon::now()->toDateString(),
+    ]);
+
+    return redirect()->route('emprestimos.index')
+        ->with('success', 'Livro devolvido com sucesso!');
+}
+
+// ... (outros métodos do seu controller)
 
     // Atualiza as informações do empréstimo
     public function update(Request $request, $id)
@@ -106,21 +109,5 @@ class EmprestimoController extends Controller
     {
         $emprestimo->delete();
         return redirect()->route('emprestimos.index')->with('success', 'Empréstimo excluído com sucesso!');
-    }
-    public function marcarComoDevolvido(Request $request, $id)
-    {
-        $emprestimo = Emprestimo::findOrFail($id);
-
-        if ($emprestimo->data_devolucao) {
-            return redirect()->route('emprestimos.index')
-                ->with('warning', 'Este empréstimo já foi devolvido.');
-        }
-
-        $emprestimo->update([
-            'data_devolucao' => Carbon::now()->toDateString(),
-        ]);
-
-        return redirect()->route('emprestimos.index')
-            ->with('success', 'Livro devolvido com sucesso!');
     }
 }
