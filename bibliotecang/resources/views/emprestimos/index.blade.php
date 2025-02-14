@@ -40,60 +40,65 @@
             </div>
         </div>
     </form>
-    <div class="row">
-        <div class="col d-flex justify-content-start">
-            <a href="{{ route('emprestimos.create') }}" class="btn btn-primary mb-3">Registrar Novo Empréstimo</a>
-            <form id="emprestimos-form" method="POST" action="{{ route('emprestimos.massDestroy') }}">
-                @csrf
-                @method('DELETE')
-        </div>
- 
-        <!-- Botões de Ação -->
-        <div class="col d-flex justify-content-end">
-            <button type="button" class="btn btn-secondary mb-3" id="selecionar-btn">Selecionar</button>
-            <button type="submit" class="btn btn-danger d-none mb-3" id="excluir-btn" disabled>Excluir Selecionados</button>
-        </div>
-    </div>
-    <table class="table table-bordered">
-        <!-- Cabeçalho da tabela -->
-        <thead>
-            <tr>
-                <th class="checkbox-column d-none">
-                    <input type="checkbox" id="select-all" />
-                </th>
-                <th>ID</th>
-                <th>Usuário</th>
-                <th>Livro</th>
-                <th>Data de Empréstimo</th>
-                <th>Data de Devolução</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($emprestimos as $emprestimo)
-            <tr class="{{ $emprestimo->data_devolucao ? 'devolvido' : 'em-aberto' }}">
-                <td class="checkbox-column d-none">
-                    <input type="checkbox" name="emprestimos[]" value="{{ $emprestimo->id }}" class="select-item" />
-                </td>
-                <td>{{ $emprestimo->id }}</td>
-                <td>{{ $emprestimo->usuario->nome }}</td>
-                <td>{{ $emprestimo->livro->titulo }}</td>
-                <td>{{ $emprestimo->data_emprestimo }}</td>
-                <td>
-                    {{ $emprestimo->data_devolucao ? $emprestimo->data_devolucao : 'Em aberto' }}
-                </td>
-                @if(!$emprestimo->data_devolucao) <!-- Adiciona botão "Marcar como Devolvido" somente para empréstimos não devolvidos -->
-                <td>
-                    <form action="{{ route('emprestimos.devolver', $emprestimo->id) }}" method="POST">
-                        @csrf
-                        @method('PATCH')
-                        <button type="submit" class="btn btn-warning btn-sm">Devolver</button>
-                    </form>
+    <form id="emprestimos-form" method="POST" action="{{ route('emprestimos.massDestroy') }}">
+        @csrf
+        @method('DELETE')
+        <div class="row">
+            <div class="col d-flex justify-content-start">
+                <a href="{{ route('emprestimos.create') }}" class="btn btn-primary mb-3">Registrar Novo Empréstimo</a>
+            </div>
+            <!-- Botões de Ação -->
 
-                </td>
-                @endif
-            </tr>
-            @endforeach
-        </tbody>
+            <div class="col d-flex justify-content-end">
+
+
+                <button type="button" class="btn btn-secondary mb-3" id="selecionar-btn">Selecionar</button>
+
+                <button type="submit" class="btn btn-danger d-none mb-3" id="excluir-btn" disabled>Excluir Selecionados</button>
+
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <!-- Cabeçalho da tabela -->
+            <thead>
+                <tr>
+                    <th class="checkbox-column d-none">
+                        <input type="checkbox" id="select-all" />
+                    </th>
+                    <th>ID</th>
+                    <th>Usuário</th>
+                    <th>Livro</th>
+                    <th>Data de Empréstimo</th>
+                    <th>Data de Devolução</th>
+                </tr>
+            </thead>
+    </form>
+    <tbody>
+        @foreach($emprestimos as $emprestimo)
+        <tr class="{{ $emprestimo->data_devolucao ? 'devolvido' : 'em-aberto' }}">
+            <td class="checkbox-column d-none">
+                <input type="checkbox" name="emprestimos[]" value="{{ $emprestimo->id }}" class="select-item" />
+            </td>
+            <td>{{ $emprestimo->id }}</td>
+            <td>{{ $emprestimo->usuario->nome }}</td>
+            <td>{{ $emprestimo->livro->titulo }}</td>
+            <td>{{ $emprestimo->data_emprestimo }}</td>
+            <td>
+                {{ $emprestimo->data_devolucao ? $emprestimo->data_devolucao : 'Em aberto' }}
+            </td>
+            @if(!$emprestimo->data_devolucao) <!-- Adiciona botão "Marcar como Devolvido" somente para empréstimos não devolvidos -->
+            <td>
+                <form action="{{ route('emprestimos.devolver', $emprestimo->id) }}" method="POST">
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" class="btn btn-warning btn-sm">Devolver</button>
+                </form>
+
+            </td>
+            @endif
+        </tr>
+        @endforeach
+    </tbody>
     </table>
     </form>
 

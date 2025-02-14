@@ -22,6 +22,7 @@
                 <th>Nome</th>
                 <th>E-mail</th>
                 <th>Telefone</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -31,6 +32,17 @@
                     <td>{{ $usuario->nome }}</td>
                     <td>{{ $usuario->email }}</td>
                     <td>{{ $usuario->telefone }}</td>
+                    <td>
+                        <!-- Botão Editar -->
+                        <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-warning btn-sm">Editar</a>
+
+                        <!-- Formulário para excluir usuário -->
+                        <form action="{{ route('usuarios.destroy', $usuario->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">Excluir</button>
+                        </form>
+                    </td>
                 </tr>
             @endforeach
         </tbody>
