@@ -20,8 +20,6 @@
             <!-- Exibindo a sinopse do livro -->
             <p><strong>Sinopse:</strong></p>
             <p>{{ $livro->sinopse ? $livro->sinopse : 'Sinopse não disponível.' }}</p>
-
-            <a href="{{ route('home') }}" class="btn btn-primary mt-3">Voltar</a>
         </div>
     </div>
 </div>

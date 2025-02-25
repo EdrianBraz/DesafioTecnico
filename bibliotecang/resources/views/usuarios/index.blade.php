@@ -4,17 +4,34 @@
 <div class="container">
     <h1>Lista de Usuários</h1>
 
-    <!-- Mensagem de sucesso -->
     @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
     @endif
 
-    <!-- Link para cadastrar um novo usuário -->
-    <a href="{{ route('usuarios.create') }}" class="btn btn-primary mb-3">Cadastrar Novo Usuário</a>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#UsuariosModal">
+        Cadastrar Novo Usuário
+    </button>
 
-    <!-- Tabela de usuários -->
+    <!-- Modal para Criar/Editar Usuário -->
+    <div class="modal fade" id="UsuariosModal" tabindex="-1" aria-labelledby="UsuariosModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="UsuariosModalLabel">Cadastrar ou Editar Usuário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="form-container">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Usuários -->
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -34,9 +51,15 @@
                     <td>{{ $usuario->telefone }}</td>
                     <td>
                         <!-- Botão Editar -->
-                        <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-warning btn-sm">Editar</a>
+                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#UsuariosModal"
+                            data-id="{{ $usuario->id }}"
+                            data-nome="{{ $usuario->nome }}"
+                            data-email="{{ $usuario->email }}"
+                            data-telefone="{{ $usuario->telefone }}">
+                            Editar
+                        </button>
 
-                        <!-- Formulário para excluir usuário -->
+                        <!-- Formulário para Excluir -->
                         <form action="{{ route('usuarios.destroy', $usuario->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
@@ -49,3 +72,65 @@
     </table>
 </div>
 @endsection
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var modal = document.getElementById('UsuariosModal');
+
+    modal.addEventListener('show.bs.modal', function(event) {
+        var button = event.relatedTarget; // O botão que abriu o modal
+        var userId = button.getAttribute('data-id'); // ID do usuário (caso de edição)
+        var userNome = button.getAttribute('data-nome');
+        var userEmail = button.getAttribute('data-email');
+        var userTelefone = button.getAttribute('data-telefone');
+        
+        // Determina a URL do formulário dependendo da ação (criar ou editar)
+        fetch(userId ? "{{ route('usuarios.edit', ':id') }}".replace(':id', userId) : "{{ route('usuarios.create') }}")
+            .then(response => {
+                if (!response.ok) throw new Error("Erro ao carregar o formulário");
+                return response.text();
+            })
+            .then(html => {
+                document.getElementById('form-container').innerHTML = html;
+
+                const telefoneInput = document.querySelector('input[name="telefone"]');
+                if (telefoneInput) {
+                    telefoneInput.addEventListener('input', function() {
+                        let numero = telefoneInput.value.replace(/\D/g, "");
+
+                        if (numero.length > 11) numero = numero.slice(0, 11);
+
+                        if (numero.length === 11) {
+                            telefoneInput.value = numero.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3");
+                        } else if (numero.length === 10) {
+                            telefoneInput.value = numero.replace(/^(\d{2})(\d{4})(\d{4})$/, "($1) $2-$3");
+                        }
+                    });
+
+                    // Preenche os dados do usuário caso seja edição
+                    if (userId) {
+                        document.querySelector('input[name="nome"]').value = userNome;
+                        document.querySelector('input[name="email"]').value = userEmail;
+                        document.querySelector('input[name="telefone"]').value = userTelefone;
+                    }
+                }
+
+                // Validação do telefone no envio do formulário
+                const form = document.getElementById('UsuarioForm');
+                if (form) {
+                    form.addEventListener('submit', function(event) {
+                        let telefone = document.getElementById('telefone').value(/\D/g, "");
+                        if (telefone.length !== 11 && telefone.length > 0) {
+                            alert("O telefone deve ter 11 dígitos. Ex: (99) 99999-9999");
+                            event.preventDefault();
+                            return;
+                        }
+
+                        document.getElementById('telefone').value = telefone; // Atualiza o valor do campo
+                    });
+                }
+            })
+            .catch(error => console.error('Erro:', error));
+    });
+});
+</script>

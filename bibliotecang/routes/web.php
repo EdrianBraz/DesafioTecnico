@@ -17,10 +17,13 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // 📚 Rotas de Livros
 Route::resource('livros', LivroController::class);
+Route::get('/livros/create', [LivroController::class, 'create'])->name('livros.create');
 Route::get('/livros/importar-sinopse/{isbn}', [LivroController::class, 'importarSinopse'])->name('livros.importarSinopse');
 
 // 👥 Rotas de Usuários
 Route::resource('usuarios', UsuarioController::class);
+Route::get('/usuarios/create', [UsuarioController::class, 'create'])->name('usuarios.create');
+Route::get('/usuarios/{usuario}/edit', [UsuarioController::class, 'edit'])->name('usuarios.edit');
 
 // Excluir empréstimos em massa
 Route::delete('/emprestimos', [EmprestimoController::class, 'massDestroy'])->name('emprestimos.massDestroy');

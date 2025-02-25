@@ -1,6 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
 <div class="container">
     <h1>Cadastrar Livro</h1>
     
@@ -29,9 +26,9 @@
             <input type="text" class="form-control" id="isbn" name="isbn" required>
         </div>
         <div class="mb-3">
-            <label for="ano_publicacao" class="form-label">Ano de Publicação</label>
-            <input type="number" class="form-control" id="ano_publicacao" name="ano_publicacao" required>
-        </div>
+        <label for="ano_publicacao" class="form-label">Ano de Publicação</label>
+<input type="text" class="form-control" id="ano_publicacao" name="ano_publicacao" required maxlength="4" pattern="^\d{4}$" title="Por favor, insira um ano com 4 dígitos" />
+
         <div class="mb-3">
     <label class="form-label">Categorias</label>
     <div style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
@@ -56,4 +53,3 @@
         <button type="submit" class="btn btn-primary">Cadastrar</button>
     </form>
 </div>
-@endsection
